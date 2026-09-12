@@ -22,9 +22,10 @@ function toKey(d: Date) {
 }
 
 function minutesOf(time: string) {
-  const [h, m] = time.split(":").map(Number);
+  const [h = 0, m = 0] = time.split(":").map(Number);
   return h * 60 + m;
 }
+
 
 function label(minutes: number) {
   const h24 = Math.floor(minutes / 60);
@@ -47,7 +48,7 @@ export function Booking() {
     });
   }, []);
 
-  const [serviceId, setServiceId] = useState(SERVICES[0].id);
+  const [serviceId, setServiceId] = useState(SERVICES[0]!.id);
   const [dateKey, setDateKey] = useState(toKey(today));
   const [time, setTime] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -61,7 +62,7 @@ export function Booking() {
   const submitBooking = useServerFn(createBooking);
   const queryClient = useQueryClient();
 
-  const range = { from: toKey(dates[0]), to: toKey(dates[dates.length - 1]) };
+  const range = { from: toKey(dates[0]!), to: toKey(dates[dates.length - 1]!) };
 
   const { data: taken = [], isLoading } = useQuery({
     queryKey: ["taken-slots", range.from, range.to],
