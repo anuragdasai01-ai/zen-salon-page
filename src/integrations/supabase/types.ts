@@ -61,14 +61,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      taken_slots: {
-        Args: { from_date: string; to_date: string }
-        Returns: {
-          booking_date: string
-          duration_min: number
-          start_time: string
-        }[]
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
