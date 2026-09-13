@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { CalendarCheck, CheckCircle2, Loader2, MessageCircle } from "lucide-react";
@@ -37,7 +37,12 @@ function label(minutes: number) {
 
 const DAYS = 14;
 
-export function Booking() {
+interface BookingProps {
+  selectedServiceId: string;
+  onServiceSelect: (id: string) => void;
+}
+
+export function Booking({ selectedServiceId, onServiceSelect }: BookingProps) {
   const today = istToday();
   const dates = useMemo(() => {
     const base = istToday();
@@ -48,7 +53,6 @@ export function Booking() {
     });
   }, []);
 
-  const [serviceId, setServiceId] = useState(SERVICES[0]!.id);
   const [dateKey, setDateKey] = useState(toKey(today));
   const [time, setTime] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -56,6 +60,17 @@ export function Booking() {
   const [email, setEmail] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState<{ date: string; time: string; service: string } | null>(null);
+
+  const serviceId = selectedServiceId;
+
+  // A service picked from the pricing table (or the select) resets any
+  // previous confirmation and the chosen time so the form is ready for
+  // date/time selection.
+  useEffect(() => {
+    setTime(null);
+    setConfirmed(null);
+    setFormError(null);
+  }, [selectedServiceId]);
 
   const service = serviceById(serviceId)!;
   const fetchSlots = useServerFn(getTakenSlots);
@@ -199,8 +214,7 @@ export function Booking() {
               id="service"
               value={serviceId}
               onChange={(e) => {
-                setServiceId(e.target.value);
-                setTime(null);
+                onServiceSelect(e.target.value);
               }}
               className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm"
             >

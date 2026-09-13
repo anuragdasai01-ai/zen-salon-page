@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/salon/site-header";
 import { Hero } from "@/components/salon/hero";
@@ -5,6 +6,7 @@ import { Services } from "@/components/salon/services";
 import { Booking } from "@/components/salon/booking";
 import { Trust } from "@/components/salon/trust";
 import { SiteFooter } from "@/components/salon/site-footer";
+import { SERVICES } from "@/lib/salon";
 
 const title = "Enrich Salon Andheri East | Book a Haircut Slot in 30 Seconds";
 const description =
@@ -25,13 +27,21 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [bookingServiceId, setBookingServiceId] = useState(SERVICES[0]!.id);
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
       <main>
         <Hero />
-        <Services />
-        <Booking />
+        <Services
+          selectedServiceId={bookingServiceId}
+          onServiceSelect={setBookingServiceId}
+        />
+        <Booking
+          selectedServiceId={bookingServiceId}
+          onServiceSelect={setBookingServiceId}
+        />
         <Trust />
       </main>
       <SiteFooter />
