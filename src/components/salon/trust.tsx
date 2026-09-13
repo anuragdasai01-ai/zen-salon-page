@@ -1,6 +1,5 @@
 import { BadgeCheck, Star } from "lucide-react";
-import beforeImage from "@/assets/before-1.jpg";
-import afterImage from "@/assets/after-1.jpg";
+import { BeforeAfterSlider } from "@/components/salon/before-after-slider";
 import { BENEFITS, CERTIFICATIONS, REVIEWS } from "@/lib/salon";
 
 export function Trust() {
