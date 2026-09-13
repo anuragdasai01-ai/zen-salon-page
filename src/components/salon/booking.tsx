@@ -72,7 +72,7 @@ export function Booking({ selectedServiceId, onServiceSelect }: BookingProps) {
     setFormError(null);
   }, [selectedServiceId]);
 
-  const service = serviceById(serviceId)!;
+  const service = serviceById(serviceId) ?? SERVICES[0]!;
   const fetchSlots = useServerFn(getTakenSlots);
   const submitBooking = useServerFn(createBooking);
   const queryClient = useQueryClient();
