@@ -27,13 +27,21 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [bookingServiceId, setBookingServiceId] = useState(SERVICES[0]!.id);
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
       <main>
         <Hero />
-        <Services />
-        <Booking />
+        <Services
+          selectedServiceId={bookingServiceId}
+          onServiceSelect={setBookingServiceId}
+        />
+        <Booking
+          selectedServiceId={bookingServiceId}
+          onServiceSelect={setBookingServiceId}
+        />
         <Trust />
       </main>
       <SiteFooter />
