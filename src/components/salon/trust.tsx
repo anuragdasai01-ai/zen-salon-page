@@ -28,34 +28,7 @@ export function Trust() {
           <p className="mt-2 text-sm text-muted-foreground">
             A smoothening and blow-dry finish from our stylists.
           </p>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <figure>
-              <img
-                src={beforeImage}
-                alt="Guest's hair before the salon treatment"
-                width={800}
-                height={800}
-                loading="lazy"
-                className="aspect-square w-full rounded-2xl object-cover"
-              />
-              <figcaption className="mt-2 text-center text-xs tracking-widest text-muted-foreground uppercase">
-                Before
-              </figcaption>
-            </figure>
-            <figure>
-              <img
-                src={afterImage}
-                alt="Guest's hair after smoothening and styling at the salon"
-                width={800}
-                height={800}
-                loading="lazy"
-                className="aspect-square w-full rounded-2xl object-cover"
-              />
-              <figcaption className="mt-2 text-center text-xs tracking-widest text-muted-foreground uppercase">
-                After
-              </figcaption>
-            </figure>
-          </div>
+          <BeforeAfterSlider />
           <ul className="mt-6 space-y-2">
             {CERTIFICATIONS.map((item) => (
               <li key={item} className="flex items-start gap-2 text-sm">
