@@ -4,6 +4,7 @@ export const SALON = {
   phone: "87980 41014",
   phoneHref: "tel:+918798041014",
   whatsapp: "918798041014",
+  ownerEmail: "anuragdas.ai.01@gmail.com",
   hours: "10:00 AM – 10:00 PM, every day",
   address:
     "Shop No. 2, Tandon Mall, 127, Andheri – Kurla Road, near Carnival Cinemas, Andheri East, Mumbai, Maharashtra 400093",
