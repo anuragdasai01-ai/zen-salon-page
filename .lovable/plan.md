@@ -1,23 +1,35 @@
-# Service card tap → booking form sync
+# Bookings in a Google Sheet + email confirmations
 
 ## Goal
-Tapping any service in the price list must instantly update the booking form's service dropdown and smooth-scroll straight to the date/time picker, with no visible lag or double scroll.
+1. Every booking is written as a row in a Google Sheet.
+2. The Sheet decides which times are already taken, so times you block by hand in the Sheet disappear from the site.
+3. Each booking sends two emails: one to you (anuragdas.ai.01@gmail.com) and one to the customer.
 
-## Current state (verified by reading the code)
-- `src/routes/index.tsx` already lifts `bookingServiceId` state and passes it to both `Services` and `Booking`.
-- `src/components/salon/services.tsx` renders each service as a button whose `onClick` calls `onServiceSelect(service.id)` then `scrollIntoView({ behavior: "smooth" })` on `#booking`.
-- `src/components/salon/booking.tsx` binds the Step 1 `<select>` to the same prop (`value={serviceId}`), so it should already reflect the tapped service.
+## What you'll be asked to approve
+- Connecting your Google account so the site can create and update the Sheet. I'll create a new sheet named "Enrich Salon Bookings" in your Google Drive and share its link with you.
+- Sending email from the site (a Lovable-managed sender address until you want emails from your own domain).
 
-So the wiring exists — this task is to verify it works end-to-end and remove anything that makes it feel delayed or broken.
+## How it will work
+**On booking**
+- The booking is saved as it is today, then appended to the Sheet with: date, time, service, duration, price, customer name, phone, email, status, and when it was booked.
+- Owner email: service, day, time, customer name, phone, email, plus a WhatsApp link to the customer.
+- Customer email: friendly confirmation with service, day, time, price, salon address, phone and hours.
+- If the Sheet or an email hiccups, the booking is still confirmed on screen — nothing is lost. The failure is logged so it can be retried.
 
-## Steps
-1. **Verify in the preview (Playwright)**: tap a service card (e.g. a haircut), confirm the booking `<select>` shows that exact service immediately, the tapped card gets its highlight, and the page smooth-scrolls so the booking form (Step 1 service dropdown and Step 2 day picker) is in view. Test with mouse and on a mobile-width viewport.
-2. **Fix any issues found**, such as:
-   - Scroll landing on the section heading instead of the form: scroll to the booking form card (or adjust the section's `scroll-margin`) so date selection is visible without a second scroll.
-   - Delayed/janky scroll: ensure no competing scroll or re-render interrupts the smooth scroll; state update and scroll fire in the same tap handler.
-   - Stale select value: confirm the select stays a controlled input bound to `selectedServiceId`.
-3. **Re-run typecheck** (`bunx tsgo --noEmit`) and confirm `build-errors.log` shows "build OK", then re-verify the tap flow in the preview.
+**On choosing a date/time**
+- Taken times come from the Sheet: any row whose status isn't "cancelled" blocks its slot for that service's length.
+- The Sheet is read at most once every 30 seconds and cached, so the picker stays fast and the Sheet's usage limits are respected.
+- If the Sheet can't be reached, the picker falls back to the saved bookings so the site never shows every slot as free.
+- Blocking a slot yourself: add a row in the Sheet with the date and time (service can be "Blocked") and that time disappears from the site.
+
+## Sheet columns
+`Booking date | Start time | Service | Duration (min) | Price | Customer name | Phone | Email | Status | Created at`
+
+Row 1 is a frozen header row. Rows are appended newest-last.
 
 ## Technical notes
-- No new files or dependencies; changes confined to `services.tsx` / `booking.tsx` / `index.tsx` if any fix is needed.
-- Keep existing plum/gold tokens and button semantics (`aria-pressed`).
+- Google Sheets connector via the Lovable connector gateway; the spreadsheet ID is stored as a project secret so the sheet is created once.
+- New server functions in `src/lib/bookings.functions.ts` (or a new `sheets.functions.ts`): `appendBookingRow`, and `getTakenSlots` reads the Sheet (`values/Bookings!A2:J`) with an in-request cache, falling back to the existing Supabase query on error.
+- Emails sent from the same server function as the insert, via the managed transactional email path; templates scaffolded with the email templates tool.
+- No schema change needed; the existing `bookings` table stays the source of truth for the fallback and for the duplicate-slot guard.
+- Booking flow UI is unchanged apart from availability now reflecting the Sheet.
