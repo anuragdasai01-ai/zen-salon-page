@@ -27,27 +27,39 @@ const rangeSchema = z.object({
   to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
+async function takenFromDatabase(from: string, to: string): Promise<TakenSlot[]> {
+  const supabase = serverClient();
+  const { data: rows, error } = await supabase
+    .from("bookings")
+    .select("booking_date, start_time, duration_min")
+    .eq("status", "confirmed")
+    .gte("booking_date", from)
+    .lte("booking_date", to);
+
+  if (error) {
+    console.error("Failed to load taken slots", error.message);
+    return [];
+  }
+
+  return (rows ?? []).map((r) => ({
+    booking_date: String(r.booking_date),
+    start_time: String(r.start_time).slice(0, 5),
+    duration_min: Number(r.duration_min),
+  }));
+}
+
+// The Google Sheet is the master record of taken times, so rows the owner adds
+// by hand also block slots. If the sheet is unreachable we fall back to the
+// saved bookings rather than showing every slot as free.
 export const getTakenSlots = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => rangeSchema.parse(data))
   .handler(async ({ data }): Promise<TakenSlot[]> => {
-    const supabase = serverClient();
-    const { data: rows, error } = await supabase
-      .from("bookings")
-      .select("booking_date, start_time, duration_min")
-      .eq("status", "confirmed")
-      .gte("booking_date", data.from)
-      .lte("booking_date", data.to);
-
-    if (error) {
-      console.error("Failed to load taken slots", error.message);
-      return [];
+    const { readSheetSlots } = await import("./sheets.server");
+    const sheetRows = await readSheetSlots();
+    if (sheetRows) {
+      return sheetRows.filter((r) => r.booking_date >= data.from && r.booking_date <= data.to);
     }
-
-    return (rows ?? []).map((r) => ({
-      booking_date: String(r.booking_date),
-      start_time: String(r.start_time).slice(0, 5),
-      duration_min: Number(r.duration_min),
-    }));
+    return takenFromDatabase(data.from, data.to);
   });
 
 const bookingSchema = z.object({
