@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { serviceById } from "./salon";
 
 type TakenSlot = { booking_date: string; start_time: string; duration_min: number };
 
@@ -81,6 +82,26 @@ export const createBooking = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => bookingSchema.parse(data))
   .handler(async ({ data }) => {
     const supabase = serverClient();
+    const { readSheetSlots, appendBookingRow } = await import("./sheets.server");
+    const { sendBookingEmails } = await import("./booking-emails.server");
+
+    const toMinutes = (t: string) => {
+      const [h = 0, m = 0] = t.split(":").map(Number);
+      return h * 60 + m;
+    };
+    const start = toMinutes(data.time);
+    const end = start + data.durationMin;
+
+    // The sheet is the master record of taken times.
+    const sheetRows = await readSheetSlots();
+    const sheetClash = (sheetRows ?? []).some((r) => {
+      if (r.booking_date !== data.date) return false;
+      const rStart = toMinutes(r.start_time);
+      return start < rStart + r.duration_min && end > rStart;
+    });
+    if (sheetClash) {
+      return { ok: false as const, error: "That slot was just taken. Please pick another time." };
+    }
 
     const { data: existing } = await supabase
       .from("bookings")
@@ -114,6 +135,38 @@ export const createBooking = createServerFn({ method: "POST" })
           ? "That slot was just taken. Please pick another time."
           : "We couldn't save your booking. Please try again or message us on WhatsApp.",
       };
+    }
+
+    // Sheet row + notification emails must never fail the confirmed booking.
+    const price = serviceById(data.serviceId)?.price ?? 0;
+    try {
+      await appendBookingRow({
+        date: data.date,
+        time: data.time,
+        serviceName: data.serviceName,
+        durationMin: data.durationMin,
+        price,
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+      });
+    } catch (sheetError) {
+      console.error("Sheet append threw", sheetError);
+    }
+
+    try {
+      await sendBookingEmails({
+        serviceName: data.serviceName,
+        durationMin: data.durationMin,
+        price,
+        date: data.date,
+        time: data.time,
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+      });
+    } catch (mailError) {
+      console.error("Booking emails threw", mailError);
     }
 
     return { ok: true as const };
