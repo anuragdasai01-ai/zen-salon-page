@@ -36,14 +36,14 @@ export function Hero() {
               asChild
               size="lg"
               variant="outline"
-              className="rounded-full border-primary-foreground/40 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+              className="rounded-full border-primary-foreground/40 bg-transparent text-primary-foreground shadow-photo hover:bg-primary-foreground/10 hover:text-primary-foreground"
             >
               <a href={whatsappLink} target="_blank" rel="noreferrer">
                 <MessageCircle className="size-4" /> Book on WhatsApp
               </a>
             </Button>
           </div>
-          <p className="mt-6 flex items-center gap-2 text-sm text-primary-foreground/70">
+          <p className="mt-6 flex items-center gap-2 text-sm text-primary-foreground/80 text-shadow-photo">
             <Clock className="size-4" /> Open {SALON.hours}
           </p>
         </div>
