@@ -15,17 +15,17 @@ export function Hero() {
         alt="Interior of Enrich Salon in Andheri East with plum walls and gold-framed mirrors"
         width={1600}
         height={1104}
-        className="absolute inset-0 size-full object-cover opacity-30"
+        className="absolute inset-0 size-full object-cover"
       />
       <div className="relative mx-auto max-w-6xl px-4 py-20 sm:py-28">
         <div className="max-w-2xl">
-          <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-3 py-1 text-xs tracking-widest text-gold uppercase">
+          <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-3 py-1 text-xs tracking-widest text-gold uppercase text-shadow-photo">
             <Star className="size-3 fill-current" /> 15+ years · Unisex salon
           </span>
-          <h1 className="mt-6 text-4xl leading-[1.1] font-semibold text-primary-foreground sm:text-6xl">
+          <h1 className="mt-6 text-4xl leading-[1.1] font-semibold text-primary-foreground text-shadow-photo sm:text-6xl">
             Tired of waiting 30 minutes just for a haircut?
           </h1>
-          <p className="mt-5 text-lg text-primary-foreground/80">
+          <p className="mt-5 text-lg text-primary-foreground/90 text-shadow-photo">
             Book your slot on WhatsApp or online in just 30 seconds.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -36,14 +36,14 @@ export function Hero() {
               asChild
               size="lg"
               variant="outline"
-              className="rounded-full border-primary-foreground/40 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+              className="rounded-full border-primary-foreground/40 bg-transparent text-primary-foreground shadow-photo hover:bg-primary-foreground/10 hover:text-primary-foreground"
             >
               <a href={whatsappLink} target="_blank" rel="noreferrer">
                 <MessageCircle className="size-4" /> Book on WhatsApp
               </a>
             </Button>
           </div>
-          <p className="mt-6 flex items-center gap-2 text-sm text-primary-foreground/70">
+          <p className="mt-6 flex items-center gap-2 text-sm text-primary-foreground/80 text-shadow-photo">
             <Clock className="size-4" /> Open {SALON.hours}
           </p>
         </div>
