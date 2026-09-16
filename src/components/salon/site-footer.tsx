@@ -3,9 +3,9 @@ import { SALON } from "@/lib/salon";
 
 export function SiteFooter() {
   return (
-    <footer id="contact" className="bg-plum-gradient text-primary-foreground">
+    <footer className="bg-plum-gradient text-primary-foreground">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 lg:grid-cols-2">
-        <div id="contact-details">
+        <div id="contact" className="scroll-mt-20">
           <h2 className="text-3xl font-semibold">Visit us in Andheri East</h2>
           <ul className="mt-6 space-y-4 text-sm text-primary-foreground/85">
             <li className="flex gap-3">
