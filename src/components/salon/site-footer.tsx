@@ -5,7 +5,7 @@ export function SiteFooter() {
   return (
     <footer id="contact" className="bg-plum-gradient text-primary-foreground">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 lg:grid-cols-2">
-        <div>
+        <div id="contact-details">
           <h2 className="text-3xl font-semibold">Visit us in Andheri East</h2>
           <ul className="mt-6 space-y-4 text-sm text-primary-foreground/85">
             <li className="flex gap-3">
@@ -44,7 +44,10 @@ export function SiteFooter() {
           </a>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-primary-foreground/20">
+        <div
+          id="location"
+          className="scroll-mt-20 overflow-hidden rounded-2xl border border-primary-foreground/20"
+        >
           <iframe
             title="Map showing Enrich Salon at Tandon Mall, Andheri East"
             src={SALON.mapEmbed}
