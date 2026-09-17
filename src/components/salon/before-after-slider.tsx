@@ -54,14 +54,9 @@ export function BeforeAfterSlider({ className }: { className?: string }) {
     <div
       ref={containerRef}
       className={cn(
-        "relative aspect-square w-full touch-none select-none overflow-hidden rounded-2xl",
+        "relative aspect-square w-full select-none overflow-hidden rounded-2xl",
         className,
       )}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={endDrag}
-      onPointerCancel={endDrag}
-      onLostPointerCapture={endDrag}
     >
       <img
         src={afterImage}
@@ -101,9 +96,15 @@ export function BeforeAfterSlider({ className }: { className?: string }) {
       </span>
 
       <div
-        className="absolute inset-y-0 w-0.5 bg-gold"
+        className="absolute inset-y-0 w-6 -translate-x-1/2 cursor-ew-resize touch-none"
         style={{ left: `${position}%` }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        onLostPointerCapture={endDrag}
       >
+        <span className="pointer-events-none absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-gold" />
         <button
           type="button"
           role="slider"
