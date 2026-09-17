@@ -70,7 +70,7 @@ export function Hero() {
             {...item}
             className="mt-8 flex flex-col gap-3 sm:flex-row"
           >
-            <motion.div whileHover={reduceMotion ? undefined : { y: -2 }}>
+            <motion.div {...(reduceMotion ? {} : { whileHover: { y: -2 } })}>
               <Button
                 asChild
                 size="lg"
@@ -79,7 +79,7 @@ export function Hero() {
                 <a href="#booking">Book Your Slot</a>
               </Button>
             </motion.div>
-            <motion.div whileHover={reduceMotion ? undefined : { y: -2 }}>
+            <motion.div {...(reduceMotion ? {} : { whileHover: { y: -2 } })}>
               <Button
                 asChild
                 size="lg"
